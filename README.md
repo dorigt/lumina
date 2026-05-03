@@ -26,9 +26,23 @@ npm run preview
 
 Preview serves the built app so you can verify the service worker and offline behavior.
 
-## Share with someone on another Wi‑Fi (public link)
+## Share with someone on another Wi‑Fi (deployed link)
 
-Your Mac’s `localhost` or `192.168.x.x` URL only works on **your** network. To give anyone a link that works **anywhere**, deploy the **built** site (`dist/`) to a free host. Each person gets a **fresh, empty app** (no habits): data stays only in their own browser, not yours.
+Your Mac’s `localhost` or `192.168.x.x` URL only works on **your** network. Deploy the **built** site (`dist/`) to a host with **HTTPS** so the link works on any network. Each visitor gets a **fresh, empty app** (no habits): data stays only in their own browser, not yours.
+
+### Keep it off the open internet (practical privacy)
+
+- **GitHub:** set the repo to **Private** (Settings → Danger zone → Change repository visibility). Your code is not public; Vercel/Netlify can still build from it after you authorize the integration.
+- **The live site URL** (e.g. `*.vercel.app`) is still “anyone with the link can open it” — same idea as an unlisted document. Do not post it on social or in a public README if you want it quiet.
+- **Invite phrase (recommended):** add an environment variable on the host (not in git):
+  - **Name:** `VITE_INVITE_CODE`
+  - **Value:** a phrase only you and your friend know (e.g. `our-may-habit-2026`)
+  - **Vercel:** Project → Settings → Environment Variables → Production → Redeploy.
+  - **Netlify:** Site → Environment variables → same, then trigger deploy.
+
+  The app then shows a small **invite screen** before anything else ([`src/components/InviteGate.tsx`](src/components/InviteGate.tsx)). Share **both** the HTTPS link **and** the phrase in private (message). See [`.env.example`](.env.example).
+
+  **Honest limit:** with any `VITE_*` variable, the phrase is baked into the shipped JavaScript. A skilled person could still extract it. This stops random visitors and casual guessing; it is not bank-grade access control. For stronger rules (e-mail allowlists, SSO), use something like **Cloudflare Access** or a host’s paid **password protection**.
 
 1. Push this project to **GitHub** (or use the folder with Git in Netlify/Vercel).
 2. Pick one host and connect the repo (or drag-and-drop the `dist` folder where supported):
