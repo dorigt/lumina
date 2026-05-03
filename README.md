@@ -4,7 +4,7 @@
 
 To rename the app, edit [`src/branding.ts`](src/branding.ts) (`APP_NAME`, `APP_TAGLINE`, colors). Keep `LOCAL_STORAGE_KEY` unless you intentionally want to reset saved habits. Update [`index.html`](index.html) title and meta tags to match.
 
-Home-screen icons (`public/pwa-*.png`, `apple-touch-icon.png`) are generated from the Lumina glow design in [`scripts/generate-app-icons.mjs`](scripts/generate-app-icons.mjs). After editing that script, run `npm run icons`.
+Home-screen icons (`public/pwa-*.png`, `apple-touch-icon.png`) are committed in the repo. To **regenerate** them after editing [`scripts/generate-app-icons.mjs`](scripts/generate-app-icons.mjs), install **sharp** only on your machine (`npm install -D sharp`) then run `npm run icons`. Sharp is intentionally not a deploy dependency so **Vercel** installs stay stable.
 
 ## Quick start
 
@@ -43,6 +43,10 @@ Your Mac’s `localhost` or `192.168.x.x` URL only works on **your** network. De
   The app then shows a small **invite screen** before anything else ([`src/components/InviteGate.tsx`](src/components/InviteGate.tsx)). Share **both** the HTTPS link **and** the phrase in private (message). See [`.env.example`](.env.example).
 
   **Honest limit:** with any `VITE_*` variable, the phrase is baked into the shipped JavaScript. A skilled person could still extract it. This stops random visitors and casual guessing; it is not bank-grade access control. For stronger rules (e-mail allowlists, SSO), use something like **Cloudflare Access** or a host’s paid **password protection**.
+
+### If Vercel fails during `npm install`
+
+Rare npm crashes (`Exit handler never called`) are often memory or native modules. This repo **does not** install `sharp` on the server (icons are committed under `public/`). If a deploy still fails on install, in Vercel go **Project → Settings → Environment Variables** and add **`NODE_OPTIONS`** = `--max-old-space-size=8192` for **Production**, then redeploy.
 
 1. Push this project to **GitHub** (or use the folder with Git in Netlify/Vercel).
 2. Pick one host and connect the repo (or drag-and-drop the `dist` folder where supported):

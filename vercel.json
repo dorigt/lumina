@@ -1,3 +1,4 @@
 {
+  "installCommand": "npm install --no-audit --no-fund --prefer-offline",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

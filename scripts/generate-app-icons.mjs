@@ -1,8 +1,9 @@
 /**
- * Renders Lumina home-screen icons (no letter): soft glow orb on mist background.
- * Run: npm run icons
+ * Renders Lumina home-screen icons: soft glow orb on mist background.
+ * Run: npm install -D sharp   (once, locally)   then   npm run icons
+ *
+ * Sharp is not a default dependency so Vercel/npm installs stay light and reliable.
  */
-import sharp from 'sharp'
 import { writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -34,14 +35,28 @@ function iconSvg(size) {
 </svg>`
 }
 
-async function writePng(size, filename) {
-  const buf = await sharp(Buffer.from(iconSvg(size), 'utf8')).png().toBuffer()
-  const out = join(publicDir, filename)
-  writeFileSync(out, buf)
-  console.log('wrote', out)
+async function main() {
+  let sharp
+  try {
+    ;({ default: sharp } = await import('sharp'))
+  } catch {
+    console.error(
+      'Missing dependency: sharp. Install locally to regenerate PNGs:\n  npm install -D sharp\n  npm run icons\n\nCommitted files in public/ are used as-is for deploys.',
+    )
+    process.exit(1)
+  }
+
+  async function writePng(size, filename) {
+    const buf = await sharp(Buffer.from(iconSvg(size), 'utf8')).png().toBuffer()
+    const out = join(publicDir, filename)
+    writeFileSync(out, buf)
+    console.log('wrote', out)
+  }
+
+  await writePng(192, 'pwa-192.png')
+  await writePng(512, 'pwa-512.png')
+  await writePng(180, 'apple-touch-icon.png')
+  console.log('Done.')
 }
 
-await writePng(192, 'pwa-192.png')
-await writePng(512, 'pwa-512.png')
-await writePng(180, 'apple-touch-icon.png')
-console.log('Done.')
+await main()
