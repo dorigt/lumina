@@ -8,7 +8,7 @@ Home-screen icons (`public/pwa-*.png`, `apple-touch-icon.png`) are committed in 
 
 ## Quick start
 
-The repo includes an [`.npmrc`](.npmrc) with `legacy-peer-deps=true` so `npm install` stays compatible with **Vite 8** and **vite-plugin-pwa**’s peer range.
+The repo includes an [`.npmrc`](.npmrc) with **`registry=https://registry.npmjs.org/`** (so `package-lock.json` never points at a private corporate registry Vercel cannot reach) and `legacy-peer-deps=true` for **Vite 8** peer ranges.
 
 ```bash
 npm install
@@ -46,12 +46,12 @@ Your Mac’s `localhost` or `192.168.x.x` URL only works on **your** network. De
 
 ### If Vercel fails (install or build)
 
-1. On GitHub, open the red **Details** link next to the failed check — it opens the Vercel deployment and **Build Logs**. Scroll to the **first red line**; that is the real error (install vs `vite build` vs TypeScript).
-2. This repo does **not** use `sharp` on the server (icons live under `public/`).
-3. The **`npm run build`** script already raises the Node heap for the Vite / PWA step. If logs still show **JavaScript heap out of memory**, add in Vercel **Settings → Environment Variables** (Production): **`NODE_OPTIONS`** = `--max-old-space-size=8192`, then **Redeploy**.
-4. To inspect from a machine where you are logged into Vercel:  
-   `npx vercel inspect <deployment-url-or-id> --logs`  
-   (GitHub sometimes prints the exact `vercel inspect` command on the failed check.)
+1. **`package-lock.json` must use the public npm registry.** If you ever run `npm install` on a laptop whose global npm points at a **private registry** (e.g. a company Artifactory), the lockfile can get `resolved: https://…artifactory…` URLs. **Vercel cannot download those**, so `npm install` hangs or dies with errors like **`Exit handler never called`**. Fix: delete `package-lock.json`, run  
+   `NPM_CONFIG_REGISTRY=https://registry.npmjs.org/ npm install`  
+   commit the new lockfile, and push. This repo’s [`.npmrc`](.npmrc) pins `registry=https://registry.npmjs.org/` to reduce repeats.
+2. On GitHub, open the red **Details** on a failed check → Vercel **Build Logs** → find the **first red line**.
+3. **PWA:** there is no `vite-plugin-pwa` / Workbox in dependencies (keeps installs small). The app uses [`public/manifest.webmanifest`](public/manifest.webmanifest) and a small [`public/sw.js`](public/sw.js) registered from [`src/main.tsx`](src/main.tsx) in production.
+4. If logs show **heap out of memory**, set **`NODE_OPTIONS`** = `--max-old-space-size=8192` in Vercel **Environment Variables** (Production), then redeploy.
 
 1. Push this project to **GitHub** (or use the folder with Git in Netlify/Vercel).
 2. Pick one host and connect the repo (or drag-and-drop the `dist` folder where supported):
@@ -103,7 +103,7 @@ Data lives in **local storage** on that device; clearing site data will reset ha
 - [Vite](https://vitejs.dev/) + [React](https://react.dev/) + TypeScript  
 - [Tailwind CSS](https://tailwindcss.com/) v4  
 - [React Router](https://reactrouter.com/), [Zustand](https://github.com/pmndrs/zustand) (persisted), [date-fns](https://date-fns.org/)  
-- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) for the web app manifest and service worker  
+- Static **Web App Manifest** + minimal **service worker** (`public/`, registered in production from `src/main.tsx`) — no Workbox dependency tree.  
 
 ## Project structure (high level)
 

@@ -1,0 +1,30 @@
+{
+  "name": "Lumina — Habit tracker",
+  "short_name": "Lumina",
+  "description": "Lumina: build gentle consistency with daily and monthly goals — stored on your device.",
+  "theme_color": "#f5f3ff",
+  "background_color": "#faf8ff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

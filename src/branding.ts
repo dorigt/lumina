@@ -1,5 +1,5 @@
 /**
- * Rebrand here: name, tagline, and PWA colors flow from this file into the app and `vite.config.ts`.
+ * Rebrand here: name, tagline, and PWA colors (keep in sync with `public/manifest.webmanifest`).
  * localStorage key stays stable so existing check-ins are not reset when you rename.
  */
 export const APP_NAME = 'Lumina'
