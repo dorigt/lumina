@@ -44,9 +44,14 @@ Your Mac’s `localhost` or `192.168.x.x` URL only works on **your** network. De
 
   **Honest limit:** with any `VITE_*` variable, the phrase is baked into the shipped JavaScript. A skilled person could still extract it. This stops random visitors and casual guessing; it is not bank-grade access control. For stronger rules (e-mail allowlists, SSO), use something like **Cloudflare Access** or a host’s paid **password protection**.
 
-### If Vercel fails during `npm install`
+### If Vercel fails (install or build)
 
-Rare npm crashes (`Exit handler never called`) are often memory or native modules. This repo **does not** install `sharp` on the server (icons are committed under `public/`). If a deploy still fails on install, in Vercel go **Project → Settings → Environment Variables** and add **`NODE_OPTIONS`** = `--max-old-space-size=8192` for **Production**, then redeploy.
+1. On GitHub, open the red **Details** link next to the failed check — it opens the Vercel deployment and **Build Logs**. Scroll to the **first red line**; that is the real error (install vs `vite build` vs TypeScript).
+2. This repo does **not** use `sharp` on the server (icons live under `public/`).
+3. The **`npm run build`** script already raises the Node heap for the Vite / PWA step. If logs still show **JavaScript heap out of memory**, add in Vercel **Settings → Environment Variables** (Production): **`NODE_OPTIONS`** = `--max-old-space-size=8192`, then **Redeploy**.
+4. To inspect from a machine where you are logged into Vercel:  
+   `npx vercel inspect <deployment-url-or-id> --logs`  
+   (GitHub sometimes prints the exact `vercel inspect` command on the failed check.)
 
 1. Push this project to **GitHub** (or use the folder with Git in Netlify/Vercel).
 2. Pick one host and connect the repo (or drag-and-drop the `dist` folder where supported):
